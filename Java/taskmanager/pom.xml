@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.3</version>
+		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>TFC_DAM</artifactId>
+	<artifactId>taskmanager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>TFC_DAM</name>
-	<description>Proyecto de Fin de Ciclo de DAM</description>
+	<name>taskmanager</name>
+	<description>Creación de proyecto Maven para TFC de DAM</description>
 	<url/>
 	<licenses>
 		<license/>
