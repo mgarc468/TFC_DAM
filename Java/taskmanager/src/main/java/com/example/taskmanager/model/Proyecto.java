@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
@@ -15,11 +16,11 @@ import java.util.Date;
 
 @Entity
 @Table(name="proyectos")
-public class Proyecto {
+public class Proyecto implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_alumno;
+    private int id;
 
     @Column
     private String nombre;
@@ -48,4 +49,17 @@ public class Proyecto {
     @Column
     private Date fecha_creacion;
 
+    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, int creado_por, Date fecha_creacion) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.presupuesto_estimado = presupuesto_estimado;
+        this.coste_interno = coste_interno;
+        this.coste_externo = coste_externo;
+        this.coste_total = coste_total;
+        this.fase_actual = fase_actual;
+        this.creado_por = creado_por;
+        this.fecha_creacion = fecha_creacion;
+    }
 }
+
+

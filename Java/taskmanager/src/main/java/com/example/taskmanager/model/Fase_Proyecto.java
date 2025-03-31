@@ -14,15 +14,21 @@ import java.io.Serializable;
 @NoArgsConstructor
 
 @Entity
-@Table(name="roles")
-public class Rol implements Serializable {
+@Table(name="fases_proyectos")
+public class Fase_Proyecto implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column
+    private int proyecto_id;
+
+    @Column
     private String nombre;
 
+    @Column
+    private int duracion_dias;
 
 }
+
