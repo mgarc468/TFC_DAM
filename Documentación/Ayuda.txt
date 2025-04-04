@@ -1,0 +1,30 @@
+http://localhost:8080/proyecto/getAll
+http://localhost:8080/proyecto/add
+{
+  "nombre": "Desarrollo de Aplicación Web PRUEBA1",
+  "descripcion": "Proyecto para el desarrollo de una nueva aplicación web para gestión de tareas.",
+  "presupuesto_estimado": 50000.00,
+  "coste_interno": 20000.00,
+  "coste_externo": 15000.00,
+  "coste_total": 35000.00,
+  "fase_actual": "Desarrollo",
+  "creado_por": 1,
+  "fecha_creacion": "2025-04-04T12:00:00"
+}
+
+http://localhost:8080/rol/getAll
+http://localhost:8080/rol/add
+{
+  "nombre": "DESARROLLADOR PRUEBA1"
+}
+
+http://localhost:8080/usuario/getAll
+http://localhost:8080/usuario/add
+
+{
+  "nombre": "Juan Pérez 1",
+  "email": "juan.perez1@example.com",
+  "password": "miContraseña123456",
+  "fecha_creacion": "2025-04-04T12:00:00"
+}
+
