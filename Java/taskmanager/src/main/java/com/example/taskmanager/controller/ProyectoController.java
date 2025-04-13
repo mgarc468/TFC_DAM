@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("proyecto")
@@ -22,9 +23,9 @@ public class ProyectoController {
     }
 
     @PostMapping("add")
-    public String addProyecto(@RequestBody Proyecto proyecto){
+    public ResponseEntity<?> addProyecto(@RequestBody Proyecto proyecto){
         proyectoService.agregarProyecto(proyecto);
-        return "Proyecto guardado correctamente";
+        return ResponseEntity.ok(Map.of("mensaje", "Proyecto guardado correctamente"));
     }
 
     @GetMapping("getAll")
