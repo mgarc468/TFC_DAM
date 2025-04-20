@@ -1,76 +1,67 @@
 import React, { useState } from "react";
 
 const RegisterUser = () => {
-  const [formData, setFormData] = useState({
-    nombre: "",
-    email: "",
-    password: "",
-  });
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8080/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al registrar usuario");
-        return res.json();
-      })
-      .then((data) => {
-        alert("Usuario registrado correctamente");
-        setFormData({ nombre: "", email: "", password: "" });
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Error al registrar el usuario");
+    const usuario = {
+      nombre,
+      email,
+      password
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/usuario/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(usuario)
       });
+
+      const text = await response.text();
+
+      if (response.ok) {
+        alert(text);
+        setNombre("");
+        setEmail("");
+        setPassword("");
+      } else {
+        alert(text);
+      }
+    } catch (error) {
+      console.error("Error en la solicitud", error);
+      alert("Error al registrar el usuario");
+    }
   };
 
   return (
     <div>
-      <h2>Registrar nuevo usuario</h2>
+      <h2>Registrar Usuario</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre:</label>
-          <input
-            type="text"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Correo electrónico:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Registrar</button>
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Crear Usuario</button>
       </form>
     </div>
   );

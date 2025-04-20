@@ -8,35 +8,61 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch("http://localhost:8080/usuario/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ usuario, password })
+        body: JSON.stringify({ email: usuario, password }),
       });
 
       if (response.ok) {
-        // Suponemos que devuelve un token o usuario
-        const data = await response.json();
-        localStorage.setItem("usuario", JSON.stringify(data));
+        localStorage.setItem("usuario", usuario);
         navigate("/dashboard");
       } else {
         alert("Login incorrecto");
       }
     } catch (error) {
       console.error("Error en login:", error);
+      alert("Error en login");
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input type="text" placeholder="Usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} required />
-        <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Entrar</button>
-      </form>
+    <div className="container mt-5 d-flex justify-content-center">
+      <div className="card p-4 shadow" style={{ width: "100%", maxWidth: "400px" }}>
+        <h3 className="text-center mb-3">Iniciar Sesión</h3>
+        <form onSubmit={handleLogin}>
+          <div className="mb-3">
+            <label className="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="ejemplo@correo.com"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Contraseña</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Entrar
+          </button>
+          <div className="text-center mt-3">
+          <a href="/recuperar-password">¿Olvidaste tu contraseña?</a>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

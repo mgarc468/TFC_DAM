@@ -1,5 +1,6 @@
 package com.example.taskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +14,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+
 
 @Entity
 @Table(name="usuarios")
@@ -33,7 +33,8 @@ public class Usuario implements Serializable {
     @Column
     private String password;
 
-    @Column
+    @Column(updatable = false, insertable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fecha_creacion;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -45,9 +46,23 @@ public class Usuario implements Serializable {
     private List<Rol> roles = new ArrayList<>();
 
     @ManyToMany(mappedBy = "usuarios")
-    private List<Proyecto> proyectos = new ArrayList<>();
+    @JsonIgnore
+    private List<Proyecto> proyectos;
 
     public Usuario() {
+    }
+
+    public Usuario(String nombre, String email, String password) {
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Usuario(String nombre, String email, String password, Date fecha_creacion) {
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
+        this.fecha_creacion = fecha_creacion;
     }
 
     public Usuario(int id, String nombre, String email, String password, Date fecha_creacion, List<Rol> roles, List<Proyecto> proyectos) {
@@ -124,4 +139,5 @@ public class Usuario implements Serializable {
     public void setProyectos(List<Proyecto> proyectos) {
         this.proyectos = proyectos;
     }
+
 }

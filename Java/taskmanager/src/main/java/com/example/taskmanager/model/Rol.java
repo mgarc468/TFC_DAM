@@ -1,5 +1,6 @@
 package com.example.taskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,19 +27,21 @@ public class Rol implements Serializable {
     private String nombre;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    private List<Usuario> usuarios = new ArrayList<>();
+    @JsonIgnore
+    private List<Rol> roles;
 
     public Rol() {
     }
 
-    public Rol(int id, String nombre, List<Usuario> usuarios) {
-        this.id = id;
+    public Rol(String nombre, List<Rol> roles) {
         this.nombre = nombre;
-        this.usuarios = usuarios;
+        this.roles = roles;
     }
 
-    public Rol(String nombre) {
+    public Rol(int id, String nombre, List<Rol> roles) {
+        this.id = id;
         this.nombre = nombre;
+        this.roles = roles;
     }
 
     public int getId() {
@@ -49,8 +52,8 @@ public class Rol implements Serializable {
         return nombre;
     }
 
-    public List<Usuario> getUsuarios() {
-        return usuarios;
+    public List<Rol> getRoles() {
+        return roles;
     }
 
     public void setId(int id) {
@@ -61,7 +64,7 @@ public class Rol implements Serializable {
         this.nombre = nombre;
     }
 
-    public void setUsuarios(List<Usuario> usuarios) {
-        this.usuarios = usuarios;
+    public void setRoles(List<Rol> roles) {
+        this.roles = roles;
     }
 }

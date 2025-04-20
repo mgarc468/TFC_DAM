@@ -11,24 +11,24 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("proyecto")
+@RequestMapping("/proyecto")
 public class ProyectoController {
 
     @Autowired
     private ProyectoService proyectoService;
 
-    @GetMapping("error")
+    @GetMapping("/error")
     public String getError(){
         return "Error en la app";
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<?> addProyecto(@RequestBody Proyecto proyecto){
         proyectoService.agregarProyecto(proyecto);
         return ResponseEntity.ok(Map.of("mensaje", "Proyecto guardado correctamente"));
     }
 
-    @GetMapping("getAll")
+    @GetMapping("/dashboard")
     public ResponseEntity<List<Proyecto>> getAllProyectos(){
         return new ResponseEntity<>(proyectoService.listarProyectos(), HttpStatus.OK);
     }
