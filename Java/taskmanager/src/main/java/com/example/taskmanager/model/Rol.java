@@ -26,22 +26,22 @@ public class Rol implements Serializable {
     @Column
     private String nombre;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "roles")
     @JsonIgnore
-    private List<Rol> roles;
+    private List<Usuario> usuarios;  // 👈 Aquí está la corrección
 
     public Rol() {
     }
 
-    public Rol(String nombre, List<Rol> roles) {
+    public Rol(String nombre, List<Usuario> usuarios) {
         this.nombre = nombre;
-        this.roles = roles;
+        this.usuarios = usuarios;
     }
 
-    public Rol(int id, String nombre, List<Rol> roles) {
+    public Rol(int id, String nombre, List<Usuario> usuarios) {
         this.id = id;
         this.nombre = nombre;
-        this.roles = roles;
+        this.usuarios = usuarios;
     }
 
     public int getId() {
@@ -52,8 +52,8 @@ public class Rol implements Serializable {
         return nombre;
     }
 
-    public List<Rol> getRoles() {
-        return roles;
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 
     public void setId(int id) {
@@ -64,7 +64,7 @@ public class Rol implements Serializable {
         this.nombre = nombre;
     }
 
-    public void setRoles(List<Rol> roles) {
-        this.roles = roles;
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 }

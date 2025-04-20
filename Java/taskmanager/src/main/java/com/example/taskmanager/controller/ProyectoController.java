@@ -29,7 +29,7 @@ public class ProyectoController {
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<List<Proyecto>> getAllProyectos(){
+    public ResponseEntity<List<Proyecto>> getAllProyectos() {
         return new ResponseEntity<>(proyectoService.listarProyectos(), HttpStatus.OK);
     }
 }

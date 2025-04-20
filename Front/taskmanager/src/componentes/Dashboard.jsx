@@ -6,7 +6,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid
+  CartesianGrid,
+  Legend,
 } from "recharts";
 
 const Dashboard = () => {
@@ -33,7 +34,7 @@ const Dashboard = () => {
   return (
     <div className="container">
       <h2 className="mb-3">Dashboard de Proyectos Activos</h2>
-      <p className="text-muted">Visualización de fases por proyecto (estilo Gantt simplificado)</p>
+      <p className="text-muted">Visualización de fases por proyecto</p>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
@@ -43,30 +44,39 @@ const Dashboard = () => {
             <h4>{project.nombre}</h4>
             <p>{project.descripcion}</p>
 
-            <ResponsiveContainer width="100%" height={150}>
-              <BarChart
-                data={project.fases.map((fase) => ({
-                  name: fase.nombre,
-                  Duración: fase.duracionDias,
-                }))}
-                layout="vertical"
-                margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis type="category" dataKey="name" />
-                <Tooltip />
-                <Bar dataKey="Duración" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
+            {project.fases && project.fases.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={50 + project.fases.length * 40}>
+                  <BarChart
+                    data={project.fases.map((fase) => ({
+                      name: fase.nombre,
+                      duracion: fase.duracion_dias,
+                    }))}
+                    layout="vertical"
+                    margin={{ top: 10, right: 30, left: 100, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="name" />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="duracion" fill="#82ca9d" />
+                  </BarChart>
+                </ResponsiveContainer>
 
-            <ul>
-              {project.fases.map((fase, idx) => (
-                <li key={idx}>
-                  <strong>{fase.nombre}</strong>: asignado a {fase.asignado}
-                </li>
-              ))}
-            </ul>
+                <ul className="mt-3">
+                  {project.fases.map((fase, idx) => (
+                    <li key={idx}>
+                      <strong>{fase.nombre}</strong>: {fase.duracion_dias} días{" "}
+                      {/* ← Aquí se podría mostrar fase.asignado si existe */}
+                      <span className="text-muted"> (asignado a: [pendiente])</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="text-muted">Este proyecto no tiene fases definidas.</p>
+            )}
           </div>
         ))
       ) : (

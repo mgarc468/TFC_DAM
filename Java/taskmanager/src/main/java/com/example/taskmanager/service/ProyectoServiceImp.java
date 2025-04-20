@@ -20,7 +20,7 @@ public class ProyectoServiceImp implements ProyectoService{
 
     @Override
     public List<Proyecto> listarProyectos() {
-        return proyectoRepository.findAll();
+        return proyectoRepository.findAllWithFases();
     }
 
     @Override

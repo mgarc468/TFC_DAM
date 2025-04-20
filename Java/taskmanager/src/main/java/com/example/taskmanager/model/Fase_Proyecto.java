@@ -1,5 +1,7 @@
 package com.example.taskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import java.io.Serializable;
 @Setter
 
 @Entity
-@Table(name="fases_proyectos")
+@Table(name="fases_proyecto")
 public class Fase_Proyecto implements Serializable {
 
     @Id
@@ -21,6 +23,7 @@ public class Fase_Proyecto implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "proyecto_id", nullable = false)
+    @JsonBackReference
     private Proyecto proyecto;
 
     @Column
