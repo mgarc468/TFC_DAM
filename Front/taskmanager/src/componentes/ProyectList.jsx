@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
@@ -8,6 +8,11 @@ const ProjectList = () => {
   const [formData, setFormData] = useState(initialProjectData());
   const [newProject, setNewProject] = useState(initialProjectData());
   const [filters, setFilters] = useState({});
+  const [fasesDisponibles, setFasesDisponibles] = useState([]);
+  const [expandedProjectId, setExpandedProjectId] = useState(null);
+  const [editingFaseId, setEditingFaseId] = useState(null);
+  const [faseForm, setFaseForm] = useState({});
+  const [newFase, setNewFase] = useState({ nombre: "", duracion_dias: 1, fecha_inicio: "", fecha_fin: "" });
 
   function initialProjectData() {
     return {
@@ -18,7 +23,7 @@ const ProjectList = () => {
       coste_externo: 0.0,
       coste_total: 0.0,
       fase_actual: "",
-      creado_por: localStorage.getItem("userId") || 1
+      creado_por: localStorage.getItem("userId") || 1,
     };
   }
 
@@ -28,8 +33,15 @@ const ProjectList = () => {
     setProjects(Array.isArray(data) ? data : []);
   };
 
+  const fetchFases = async () => {
+    const res = await fetch("http://localhost:8080/fases/nombres");
+    const data = await res.json();
+    setFasesDisponibles(data);
+  };
+
   useEffect(() => {
     fetchProjects();
+    fetchFases();
   }, []);
 
   useEffect(() => {
@@ -63,10 +75,11 @@ const ProjectList = () => {
   };
 
   const saveChanges = async (id) => {
+    const { creado_por, creadoPor, fases, ...dataToSend } = formData;
     const res = await fetch(`http://localhost:8080/proyecto/update/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(dataToSend),
     });
 
     if (res.ok) {
@@ -88,10 +101,20 @@ const ProjectList = () => {
   };
 
   const addProject = async () => {
-    const res = await fetch("http://localhost:8080/proyecto/add", {
+    const userId = localStorage.getItem("userId");
+
+    const projectToSend = {
+      ...newProject,
+      presupuesto_estimado: parseFloat(newProject.presupuesto_estimado) || 0,
+      coste_interno: parseFloat(newProject.coste_interno) || 0,
+      coste_externo: parseFloat(newProject.coste_externo) || 0,
+      coste_total: parseFloat(newProject.coste_total) || 0,
+    };
+
+    const res = await fetch(`http://localhost:8080/proyecto/add?usuarioId=${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newProject),
+      body: JSON.stringify(projectToSend),
     });
 
     if (res.ok) {
@@ -102,7 +125,72 @@ const ProjectList = () => {
     }
   };
 
-  const total = (key) => filtered.reduce((sum, p) => sum + parseFloat(p[key] || 0), 0).toFixed(2);
+  const total = (key) =>
+    filtered.reduce((sum, p) => sum + parseFloat(p[key] || 0), 0).toFixed(2);
+
+  const toggleExpand = (id) => {
+    setExpandedProjectId(expandedProjectId === id ? null : id);
+  };
+
+  const handleEditFase = (fase) => {
+    setEditingFaseId(fase.id);
+    setFaseForm({ ...fase });
+  };
+
+  const cancelEditFase = () => {
+    setEditingFaseId(null);
+    setFaseForm({});
+  };
+
+  const saveFase = async (proyectoId, faseId) => {
+    const res = await fetch(`http://localhost:8080/fases/update/${faseId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...faseForm, proyecto_id: proyectoId }),
+    });
+
+    if (res.ok) {
+      await fetchProjects();
+      cancelEditFase();
+    } else {
+      alert("Error al guardar fase");
+    }
+  };
+
+  const deleteFase = async (faseId) => {
+    if (window.confirm("¿Eliminar esta fase?")) {
+      console.log("Intentando eliminar fase ID:", faseId); // ← verifica esto
+      const res = await fetch(`http://localhost:8080/fases/delete/${faseId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        await fetchProjects();
+      } else {
+        alert("Error al eliminar fase");
+      }
+    }
+  };
+
+  const addFase = async (proyectoId) => {
+    const faseToSend = {
+      ...newFase,
+      duracion_dias: parseInt(newFase.duracion_dias),
+      proyecto_id: proyectoId,
+    };
+
+    const res = await fetch(`http://localhost:8080/fases/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(faseToSend),
+    });
+
+    if (res.ok) {
+      await fetchProjects();
+      setNewFase({ nombre: "", duracion_dias: 1, fecha_inicio: "", fecha_fin: "" });
+    } else {
+      alert("Error al añadir fase");
+    }
+  };
 
   return (
     <div className="container mt-5">
@@ -112,7 +200,7 @@ const ProjectList = () => {
       <div className="card p-3 mb-4">
         <h5>Nuevo Proyecto</h5>
         <div className="row g-2">
-          {["nombre", "descripcion", "fase_actual", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total"].map((field) => (
+          {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total"].map((field) => (
             <div className="col-md-3" key={field}>
               <input
                 className="form-control"
@@ -123,6 +211,18 @@ const ProjectList = () => {
               />
             </div>
           ))}
+          <div className="col-md-3">
+            <select
+              className="form-select"
+              value={newProject.fase_actual}
+              onChange={(e) => setNewProject({ ...newProject, fase_actual: e.target.value })}
+            >
+              <option value="">Selecciona fase</option>
+              {fasesDisponibles.map((fase, i) => (
+                <option key={i} value={fase}>{fase}</option>
+              ))}
+            </select>
+          </div>
           <div className="col-md-3">
             <button className="btn btn-success w-100" onClick={addProject}>
               <FaPlus /> Añadir Proyecto
@@ -135,7 +235,7 @@ const ProjectList = () => {
       <table className="table table-bordered table-striped align-middle">
         <thead className="table-light">
           <tr>
-            {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total", "fase_actual", "creado_por"].map((key) => (
+            {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total", "fase_actual", "creadoPor"].map((key) => (
               <th key={key}>
                 {key.replaceAll("_", " ")}
                 <input
@@ -146,54 +246,161 @@ const ProjectList = () => {
                 />
               </th>
             ))}
+            <th>Fases</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {filtered.map((project) => (
-            <tr key={project.id}>
-              {editId === project.id ? (
-                <>
-                  {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total", "fase_actual", "creado_por"].map((field) => (
-                    <td key={field}>
-                      <input
-                        className="form-control"
-                        type="text"
-                        value={formData[field]}
-                        onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-                      />
+            <React.Fragment key={project.id}>
+              <tr>
+                {editId === project.id ? (
+                  <>
+                    {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total"].map((field) => (
+                      <td key={field}>
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={formData[field]}
+                          onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                        />
+                      </td>
+                    ))}
+                    <td>
+                      <select
+                        className="form-select"
+                        value={formData.fase_actual}
+                        onChange={(e) => setFormData({ ...formData, fase_actual: e.target.value })}
+                      >
+                        <option value="">Selecciona fase</option>
+                        {fasesDisponibles.map((fase, i) => (
+                          <option key={i} value={fase}>{fase}</option>
+                        ))}
+                      </select>
                     </td>
-                  ))}
-                  <td>
-                    <div className="btn-group">
-                      <button className="btn btn-success btn-sm" onClick={() => saveChanges(project.id)}><FaSave /></button>
-                      <button className="btn btn-secondary btn-sm" onClick={cancelEdit}><FaTimes /></button>
-                    </div>
+                    <td>{project.creadoPor?.nombre || "Sin info"}</td>
+                    <td>
+                      <div className="btn-group">
+                        <button className="btn btn-success btn-sm" onClick={() => saveChanges(project.id)}><FaSave /></button>
+                        <button className="btn btn-secondary btn-sm" onClick={cancelEdit}><FaTimes /></button>
+                      </div>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{project.nombre}</td>
+                    <td>{project.descripcion}</td>
+                    <td>{project.presupuesto_estimado}</td>
+                    <td>{project.coste_interno}</td>
+                    <td>{project.coste_externo}</td>
+                    <td>{project.coste_total}</td>
+                    <td>{project.fase_actual}</td>
+                    <td>{project.creadoPor?.nombre || "Sin info"}</td>
+                    <td className="text-center">
+                      <button className="btn btn-sm btn-outline-primary" onClick={() => toggleExpand(project.id)}>
+                        {expandedProjectId === project.id ? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                    </td>
+                    <td>
+                      <div className="btn-group">
+                        <button className="btn btn-primary btn-sm" onClick={() => handleEdit(project)}><FaEdit /></button>
+                        <button className="btn btn-danger btn-sm" onClick={() => deleteProject(project.id)}><FaTrash /></button>
+                      </div>
+                    </td>
+                  </>
+                )}
+              </tr>
+
+              {/* FASES del proyecto */}
+              {expandedProjectId === project.id && (
+                <tr>
+                  <td colSpan="11">
+                    <h6>Fases del Proyecto</h6>
+                    <table className="table table-sm table-bordered">
+                      <thead className="table-light">
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Duración</th>
+                          <th>Inicio</th>
+                          <th>Fin</th>
+                          <th>Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {project.fases?.map((fase) => (
+                          <tr key={fase.id}>
+                            {editingFaseId === fase.id ? (
+                              <>
+                                <td>
+                                  <select
+                                    className="form-select"
+                                    value={faseForm.nombre}
+                                    onChange={(e) => setFaseForm({ ...faseForm, nombre: e.target.value })}
+                                  >
+                                    <option value="">Selecciona fase</option>
+                                    {fasesDisponibles.map((fase, i) => (
+                                      <option key={i} value={fase}>
+                                        {fase}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+                                <td><input className="form-control" type="number" value={faseForm.duracion_dias} onChange={(e) => setFaseForm({ ...faseForm, duracion_dias: e.target.value })} /></td>
+                                <td><input className="form-control" type="date" value={faseForm.fecha_inicio?.slice(0, 10)} onChange={(e) => setFaseForm({ ...faseForm, fecha_inicio: e.target.value })} /></td>
+                                <td><input className="form-control" type="date" value={faseForm.fecha_fin?.slice(0, 10)} onChange={(e) => setFaseForm({ ...faseForm, fecha_fin: e.target.value })} /></td>
+                                <td>
+                                  <button className="btn btn-success btn-sm me-1" onClick={() => saveFase(project.id, fase.id)}><FaSave /></button>
+                                  <button className="btn btn-secondary btn-sm" onClick={cancelEditFase}><FaTimes /></button>
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td>{fase.nombre}</td>
+                                <td>{fase.duracion_dias}</td>
+                                <td>{fase.fecha_inicio?.slice(0, 10)}</td>
+                                <td>{fase.fecha_fin?.slice(0, 10)}</td>
+                                <td>
+                                  <button className="btn btn-sm btn-primary me-1" onClick={() => handleEditFase(fase)}><FaEdit /></button>
+                                  <button className="btn btn-sm btn-danger" onClick={() => deleteFase(fase.id)}><FaTrash /></button>
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        ))}
+
+                        {/* Añadir nueva fase */}
+                        <tr>
+                        <td>
+                          <select
+                            className="form-select"
+                            value={newFase.nombre}
+                            onChange={(e) =>
+                              setNewFase({ ...newFase, nombre: e.target.value })
+                            }
+                          >
+                            <option value="">Selecciona fase</option>
+                            {fasesDisponibles.map((fase, i) => (
+                              <option key={i} value={fase}>
+                                {fase}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                          <td><input className="form-control" type="number" value={newFase.duracion_dias} onChange={(e) => setNewFase({ ...newFase, duracion_dias: e.target.value })} /></td>
+                          <td><input className="form-control" type="date" value={newFase.fecha_inicio} onChange={(e) => setNewFase({ ...newFase, fecha_inicio: e.target.value })} /></td>
+                          <td><input className="form-control" type="date" value={newFase.fecha_fin} onChange={(e) => setNewFase({ ...newFase, fecha_fin: e.target.value })} /></td>
+                          <td>
+                            <button className="btn btn-success btn-sm" onClick={() => addFase(project.id)}><FaPlus /></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </td>
-                </>
-              ) : (
-                <>
-                  <td>{project.nombre}</td>
-                  <td>{project.descripcion}</td>
-                  <td>{project.presupuesto_estimado}</td>
-                  <td>{project.coste_interno}</td>
-                  <td>{project.coste_externo}</td>
-                  <td>{project.coste_total}</td>
-                  <td>{project.fase_actual}</td>
-                  <td>{project.creadoPor?.nombre || "Sin info"}</td>
-                  <td>
-                    <div className="btn-group">
-                      <button className="btn btn-primary btn-sm" onClick={() => handleEdit(project)}><FaEdit /></button>
-                      <button className="btn btn-danger btn-sm" onClick={() => deleteProject(project.id)}><FaTrash /></button>
-                    </div>
-                  </td>
-                </>
+                </tr>
               )}
-            </tr>
+            </React.Fragment>
           ))}
         </tbody>
-
-        {/* Totales al pie */}
         <tfoot className="table-light">
           <tr>
             <td colSpan={2}><strong>Totales:</strong></td>
@@ -201,7 +408,7 @@ const ProjectList = () => {
             <td>{total("coste_interno")}</td>
             <td>{total("coste_externo")}</td>
             <td>{total("coste_total")}</td>
-            <td colSpan={3}></td>
+            <td colSpan={4}></td>
           </tr>
         </tfoot>
       </table>

@@ -35,7 +35,7 @@ public class ProyectoServiceImp implements ProyectoService{
         existente.setCoste_externo(datosActualizados.getCoste_externo());
         existente.setCoste_total(datosActualizados.getCoste_total());
         existente.setFase_actual(datosActualizados.getFase_actual());
-        existente.setCreadoPor(datosActualizados.getCreadoPor());
+        //existente.setCreadoPor(datosActualizados.getCreadoPor());
 
         return proyectoRepository.save(existente);
     }

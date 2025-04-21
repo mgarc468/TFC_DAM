@@ -8,16 +8,22 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:8080/usuario/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: usuario, password }),
       });
-
+  
       if (response.ok) {
-        localStorage.setItem("usuario", usuario);
+        const data = await response.json();
+  
+        // ✅ Guardamos los datos del usuario
+        localStorage.setItem("userId", data.id);         // Guardamos el ID
+        localStorage.setItem("usuario", data.email);     // Guardamos el email (opcional)
+        localStorage.setItem("nombre", data.nombre);     // Guardamos el nombre (opcional)
+  
         navigate("/dashboard");
       } else {
         alert("Login incorrecto");
@@ -27,6 +33,7 @@ const Login = () => {
       alert("Error en login");
     }
   };
+  
 
   return (
     <div className="container mt-5 d-flex justify-content-center">

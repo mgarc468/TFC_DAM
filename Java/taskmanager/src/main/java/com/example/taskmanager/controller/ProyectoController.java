@@ -1,18 +1,24 @@
 package com.example.taskmanager.controller;
 
 import com.example.taskmanager.model.Proyecto;
+import com.example.taskmanager.model.Usuario;
+import com.example.taskmanager.repository.UsuarioRepository;
 import com.example.taskmanager.service.ProyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/proyecto")
 public class ProyectoController {
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     private ProyectoService proyectoService;
@@ -23,9 +29,16 @@ public class ProyectoController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addProyecto(@RequestBody Proyecto proyecto){
+    public ResponseEntity<?> addProyecto(@RequestBody Proyecto proyecto, @RequestParam int usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        proyecto.setCreadoPor(usuario);
+        proyecto.setFecha_creacion(new Date());
+
         proyectoService.agregarProyecto(proyecto);
-        return ResponseEntity.ok(Map.of("mensaje", "Proyecto guardado correctamente"));
+
+        return ResponseEntity.ok(Map.of("mensaje", "Proyecto creado correctamente"));
     }
 
     @GetMapping("/dashboard")
