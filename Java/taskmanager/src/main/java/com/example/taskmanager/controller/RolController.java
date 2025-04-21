@@ -21,14 +21,8 @@ public class RolController {
         return "Error en la app";
     }
 
-    @PostMapping("add")
-    public String addProyecto(@RequestBody Rol rol){
-        rolService.agregarRol(rol);
-        return "Rol guardado correctamente";
-    }
-
-    @GetMapping("getAll")
-    public ResponseEntity<List<Rol>> getAllRoles(){
-        return new ResponseEntity<>(rolService.listarRoles(), HttpStatus.OK);
+    @GetMapping("/getAll")
+    public List<Rol> getAllRoles() {
+        return rolService.listarTodos();
     }
 }

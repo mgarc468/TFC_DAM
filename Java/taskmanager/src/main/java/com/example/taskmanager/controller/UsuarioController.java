@@ -21,6 +21,8 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/error")
     public String getError(){
@@ -60,9 +62,6 @@ public class UsuarioController {
         }
     }
 
-    @Autowired
-    private EmailService emailService;
-
     @PostMapping("/recuperar")
     public ResponseEntity<String> recuperarPassword(@RequestBody Map<String, String> body) {
         try {
@@ -91,6 +90,21 @@ public class UsuarioController {
             e.printStackTrace(); // 👈 esto muestra el error en la consola
             return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
         }
+    }
+
+    // Actualizar usuario
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable int id, @RequestBody Usuario usuario) {
+        usuario.setId(id);
+        usuarioService.guardarUsuario(usuario);
+        return ResponseEntity.ok("Usuario actualizado");
+    }
+
+    // Eliminar usuario
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable int id) {
+        usuarioService.eliminarUsuario(id);
+        return ResponseEntity.ok("Usuario eliminado");
     }
 
 

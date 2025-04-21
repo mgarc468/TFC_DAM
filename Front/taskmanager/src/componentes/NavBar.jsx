@@ -23,19 +23,13 @@ const NavBar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/register">Registrar Usuario</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/add-project">Agregar Proyecto</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/project-list">Listado de Proyectos</Link>
-            </li>
-            <li className="nav-item">
               <Link className="nav-link" to="/dashboard">Dashboard</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/project-costs">Costes de Proyectos</Link>
+              <Link className="nav-link" to="/usuarios">Gestión de Usuarios</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/proyectos">Gestión de Proyectos</Link>
             </li>
           </ul>
         </div>

@@ -1,16 +1,15 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./componentes/Login";
-import RegisterUser from "./componentes/RegisterUser";
-import Dashboard from "./componentes/Dashboard";
-import AddProject from "./componentes/AddProyect";
-import ProjectList from "./componentes/ProyectList";
-import ProjectCosts from "./componentes/ProyectCosts";
-import RecuperarPassword from "./componentes/RecuperarPassword";
-import RutaProtegida from "./componentes/RutaProtegida";
-import NavBar from "./componentes/NavBar";
-
 import { useLocation } from "react-router-dom";
+import RutaProtegida from "./componentes/RutaProtegida";
+
+import Login from "./componentes/Login";
+import RecuperarPassword from "./componentes/RecuperarPassword";
+
+import NavBar from "./componentes/NavBar";
+import Dashboard from "./componentes/Dashboard";
+import UserList from "./componentes/UserList";
+import ProjectList from "./componentes/ProyectList";
 
 const Layout = () => {
   const location = useLocation();
@@ -25,14 +24,6 @@ const Layout = () => {
 
         {/* Rutas protegidas */}
         <Route
-          path="/register"
-          element={
-            <RutaProtegida>
-              <RegisterUser />
-            </RutaProtegida>
-          }
-        />
-        <Route
           path="/dashboard"
           element={
             <RutaProtegida>
@@ -41,26 +32,18 @@ const Layout = () => {
           }
         />
         <Route
-          path="/add-project"
+          path="/usuarios"
           element={
             <RutaProtegida>
-              <AddProject />
+              <UserList />
             </RutaProtegida>
           }
         />
         <Route
-          path="/project-list"
+          path="/proyectos"
           element={
             <RutaProtegida>
               <ProjectList />
-            </RutaProtegida>
-          }
-        />
-        <Route
-          path="/project-costs"
-          element={
-            <RutaProtegida>
-              <ProjectCosts />
             </RutaProtegida>
           }
         />
@@ -76,5 +59,8 @@ const App = () => {
     </Router>
   );
 };
+
+// Simulando un login (esto puede venir de un contexto o del localStorage)
+const loggedUserId = localStorage.getItem("userId");
 
 export default App;

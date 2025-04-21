@@ -32,4 +32,18 @@ public class ProyectoController {
     public ResponseEntity<List<Proyecto>> getAllProyectos() {
         return new ResponseEntity<>(proyectoService.listarProyectos(), HttpStatus.OK);
     }
+
+    // Editar
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Proyecto> editarProyecto(@PathVariable int id, @RequestBody Proyecto datosActualizados) {
+        Proyecto actualizado = proyectoService.editarProyecto(id, datosActualizados);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    // Eliminar
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> eliminarProyecto(@PathVariable int id) {
+        proyectoService.eliminarProyecto(id);
+        return ResponseEntity.noContent().build();
+    }
 }

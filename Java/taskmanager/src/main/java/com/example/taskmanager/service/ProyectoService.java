@@ -8,6 +8,7 @@ public interface ProyectoService {
 
     Proyecto agregarProyecto(Proyecto proyecto);
     List<Proyecto> listarProyectos();
-    List<Proyecto> buscarProyectoPorId(int id);
+    Proyecto editarProyecto(int id, Proyecto datosActualizados);
+    void eliminarProyecto(int id);
 
 }

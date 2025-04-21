@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RolService {
 
-    Rol agregarRol(Rol rol);
-    List<Rol> listarRoles();
-
+    List<Rol> listarTodos();
+    Rol buscarPorId(int id);
+    List<Rol> buscarPorIds(List<Integer> ids);
 }

@@ -14,12 +14,17 @@ public class RolServiceImp implements RolService{
     private RolRepository rolRepository;
 
     @Override
-    public Rol agregarRol(Rol rol) {
-        return rolRepository.save(rol);
+    public List<Rol> listarTodos() {
+        return rolRepository.findAll();
     }
 
     @Override
-    public List<Rol> listarRoles() {
-        return rolRepository.findAll();
+    public Rol buscarPorId(int id) {
+        return rolRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Rol> buscarPorIds(List<Integer> ids) {
+        return rolRepository.findAllById(ids);
     }
 }

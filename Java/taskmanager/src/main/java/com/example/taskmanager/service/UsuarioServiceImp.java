@@ -47,4 +47,14 @@ public class UsuarioServiceImp implements UsuarioService {
         return UUID.randomUUID().toString().substring(0, 8); // Ejemplo: "a1b2c3d4"
     }
 
+    @Override
+    public Usuario guardarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void eliminarUsuario(int id) {
+        usuarioRepository.deleteById(id);
+    }
+
 }

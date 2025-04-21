@@ -43,8 +43,9 @@ public class Proyecto implements Serializable {
     @Column
     private String fase_actual;
 
-    @Column
-    private int creado_por;
+    @ManyToOne
+    @JoinColumn(name = "creado_por", referencedColumnName = "id")
+    private Usuario creadoPor;
 
     @Column
     private Date fecha_creacion;
@@ -64,7 +65,7 @@ public class Proyecto implements Serializable {
     public Proyecto() {
     }
 
-    public Proyecto(int id, String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, int creado_por, Date fecha_creacion, List<Usuario> usuarios) {
+    public Proyecto(int id, String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor, Date fecha_creacion, List<Usuario> usuarios, List<Fase_Proyecto> fases) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -73,12 +74,13 @@ public class Proyecto implements Serializable {
         this.coste_externo = coste_externo;
         this.coste_total = coste_total;
         this.fase_actual = fase_actual;
-        this.creado_por = creado_por;
+        this.creadoPor = creadoPor;
         this.fecha_creacion = fecha_creacion;
         this.usuarios = usuarios;
+        this.fases = fases;
     }
 
-    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, int creado_por, Date fecha_creacion) {
+    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor, Date fecha_creacion, List<Usuario> usuarios, List<Fase_Proyecto> fases) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.presupuesto_estimado = presupuesto_estimado;
@@ -86,11 +88,13 @@ public class Proyecto implements Serializable {
         this.coste_externo = coste_externo;
         this.coste_total = coste_total;
         this.fase_actual = fase_actual;
-        this.creado_por = creado_por;
+        this.creadoPor = creadoPor;
         this.fecha_creacion = fecha_creacion;
+        this.usuarios = usuarios;
+        this.fases = fases;
     }
 
-    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, int creado_por, Date fecha_creacion, List<Usuario> usuarios) {
+    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.presupuesto_estimado = presupuesto_estimado;
@@ -98,9 +102,7 @@ public class Proyecto implements Serializable {
         this.coste_externo = coste_externo;
         this.coste_total = coste_total;
         this.fase_actual = fase_actual;
-        this.creado_por = creado_por;
-        this.fecha_creacion = fecha_creacion;
-        this.usuarios = usuarios;
+        this.creadoPor = creadoPor;
     }
 
     public int getId() {
@@ -135,8 +137,8 @@ public class Proyecto implements Serializable {
         return fase_actual;
     }
 
-    public int getCreado_por() {
-        return creado_por;
+    public Usuario getCreadoPor() {
+        return creadoPor;
     }
 
     public Date getFecha_creacion() {
@@ -145,6 +147,10 @@ public class Proyecto implements Serializable {
 
     public List<Usuario> getUsuarios() {
         return usuarios;
+    }
+
+    public List<Fase_Proyecto> getFases() {
+        return fases;
     }
 
     public void setId(int id) {
@@ -179,8 +185,8 @@ public class Proyecto implements Serializable {
         this.fase_actual = fase_actual;
     }
 
-    public void setCreado_por(int creado_por) {
-        this.creado_por = creado_por;
+    public void setCreadoPor(Usuario creadoPor) {
+        this.creadoPor = creadoPor;
     }
 
     public void setFecha_creacion(Date fecha_creacion) {
@@ -189,6 +195,10 @@ public class Proyecto implements Serializable {
 
     public void setUsuarios(List<Usuario> usuarios) {
         this.usuarios = usuarios;
+    }
+
+    public void setFases(List<Fase_Proyecto> fases) {
+        this.fases = fases;
     }
 }
 

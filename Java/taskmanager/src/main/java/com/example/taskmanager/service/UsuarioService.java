@@ -15,4 +15,6 @@ public interface UsuarioService {
     boolean existeEmail(String email);
     Optional<Usuario> buscarPorEmail(String email);
     String generarPasswordTemporal();
+    Usuario guardarUsuario(Usuario usuario);
+    void eliminarUsuario(int id);
 }
