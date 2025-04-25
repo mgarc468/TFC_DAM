@@ -17,4 +17,5 @@ public interface UsuarioService {
     String generarPasswordTemporal();
     Usuario guardarUsuario(Usuario usuario);
     void eliminarUsuario(int id);
+    Usuario crearUsuarioConRol(Usuario usuario, int rolId);
 }

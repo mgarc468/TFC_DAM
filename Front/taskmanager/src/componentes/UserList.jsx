@@ -45,9 +45,16 @@ const UserList = () => {
     const res = await fetch(`http://localhost:8080/usuario/update/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        nombre: formData.nombre,
+        email: formData.email,
+        password: formData.password,
+        roles: [
+          { id: parseInt(formData.rolId) } // 👈 muy importante que el id sea número
+        ]
+      }),
     });
-
+  
     if (res.ok) {
       await fetchUsuarios();
       cancelarEdicion();

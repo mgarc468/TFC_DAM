@@ -10,5 +10,6 @@ public interface ProyectoService {
     List<Proyecto> listarProyectos();
     Proyecto editarProyecto(int id, Proyecto datosActualizados);
     void eliminarProyecto(int id);
-
+    void asignarUsuarioAProyecto(int proyectoId, int usuarioId);
+    void eliminarUsuarioDeProyecto(int proyectoId, int usuarioId);
 }

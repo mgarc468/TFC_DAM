@@ -1,10 +1,13 @@
 package com.example.taskmanager.service;
 
+import com.example.taskmanager.model.Rol;
 import com.example.taskmanager.model.Usuario;
+import com.example.taskmanager.repository.RolRepository;
 import com.example.taskmanager.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +17,9 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private RolRepository rolRepository;
 
     @Override
     public Usuario agregarUsuario(Usuario usuario) {
@@ -44,7 +50,7 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Override
     public String generarPasswordTemporal() {
-        return UUID.randomUUID().toString().substring(0, 8); // Ejemplo: "a1b2c3d4"
+        return UUID.randomUUID().toString().substring(0, 12); // Ejemplo: "a1b2c3d4"
     }
 
     @Override
@@ -55,6 +61,18 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public void eliminarUsuario(int id) {
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public Usuario crearUsuarioConRol(Usuario usuario, int rolId) {
+        Rol rol = rolRepository.findById(rolId)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado con id: " + rolId));
+
+        List<Rol> roles = new ArrayList<>();
+        roles.add(rol);
+        usuario.setRoles(roles);
+
+        return usuarioRepository.save(usuario);
     }
 
 }

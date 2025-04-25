@@ -1,8 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const NavBar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("usuario"); // o "userId" si guardaste eso
+    navigate("/");
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <div className="container-fluid">
@@ -30,6 +37,11 @@ const NavBar = () => {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/proyectos">Gestión de Proyectos</Link>
+            </li>
+            <li className="nav-item">
+              <button className="btn btn-outline-light ms-3" onClick={handleLogout}>
+                Cerrar Sesión
+              </button>
             </li>
           </ul>
         </div>

@@ -101,4 +101,20 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(id);
         return ResponseEntity.ok("Usuario eliminado");
     }
+
+    @PostMapping("/addWithRol")
+    public ResponseEntity<Usuario> crearUsuarioConRol(@RequestBody Map<String, Object> body) {
+        String nombre = (String) body.get("nombre");
+        String email = (String) body.get("email");
+        String password = (String) body.get("password");
+        int rolId = Integer.parseInt(body.get("rolId").toString());
+
+        Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.setNombre(nombre);
+        nuevoUsuario.setEmail(email);
+        nuevoUsuario.setPassword(password);
+
+        Usuario usuarioCreado = usuarioService.crearUsuarioConRol(nuevoUsuario, rolId);
+        return ResponseEntity.ok(usuarioCreado);
+    }
 }

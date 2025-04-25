@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
+const formatDateForInput = (fecha) => {
+  if (!fecha) return "";
+  const d = new Date(fecha);
+  const offset = d.getTimezoneOffset();
+  d.setMinutes(d.getMinutes() - offset);
+  return d.toISOString().slice(0, 10);
+};
+
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -13,19 +21,59 @@ const ProjectList = () => {
   const [editingFaseId, setEditingFaseId] = useState(null);
   const [faseForm, setFaseForm] = useState({});
   const [newFase, setNewFase] = useState({ nombre: "", duracion_dias: 1, fecha_inicio: "", fecha_fin: "" });
+  const [usuariosDisponibles, setUsuariosDisponibles] = useState([]);
+  const [nuevoUsuarioAsignado, setNuevoUsuarioAsignado] = useState({});
 
   function initialProjectData() {
     return {
       nombre: "",
       descripcion: "",
       presupuesto_estimado: "",
-      coste_interno: 0.0,
-      coste_externo: 0.0,
-      coste_total: 0.0,
+      coste_interno: "",
+      coste_externo: "",
+      coste_total: "",
       fase_actual: "",
       creado_por: localStorage.getItem("userId") || 1,
     };
   }
+
+  // Cargar usuarios disponibles (al montar el componente)
+const fetchUsuarios = async () => {
+  const res = await fetch("http://localhost:8080/usuario/getAll");
+  const data = await res.json();
+  setUsuariosDisponibles(data);
+};
+
+// Asignar un usuario a un proyecto
+const asignarUsuarioAProyecto = async (proyectoId, usuarioId) => {
+  const res = await fetch(`http://localhost:8080/proyecto/asignarUsuario`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usuarioId, proyectoId }),
+  });
+
+  if (res.ok) {
+    await fetchProjects(); // recargar proyectos
+    setNuevoUsuarioAsignado({}); // limpiar selección
+  } else {
+    alert("Error al asignar usuario al proyecto");
+  }
+};
+
+// Eliminar un usuario de un proyecto
+const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
+  const res = await fetch(`http://localhost:8080/proyecto/eliminarUsuario`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usuarioId, proyectoId }),
+  });
+
+  if (res.ok) {
+    await fetchProjects();
+  } else {
+    alert("Error al eliminar usuario del proyecto");
+  }
+};
 
   const fetchProjects = async () => {
     const res = await fetch("http://localhost:8080/proyecto/dashboard");
@@ -42,6 +90,7 @@ const ProjectList = () => {
   useEffect(() => {
     fetchProjects();
     fetchFases();
+    fetchUsuarios();
   }, []);
 
   useEffect(() => {
@@ -300,6 +349,7 @@ const ProjectList = () => {
                       <button className="btn btn-sm btn-outline-primary" onClick={() => toggleExpand(project.id)}>
                         {expandedProjectId === project.id ? <FaChevronUp /> : <FaChevronDown />}
                       </button>
+        
                     </td>
                     <td>
                       <div className="btn-group">
@@ -345,9 +395,19 @@ const ProjectList = () => {
                                     ))}
                                   </select>
                                 </td>
-                                <td><input className="form-control" type="number" value={faseForm.duracion_dias} onChange={(e) => setFaseForm({ ...faseForm, duracion_dias: e.target.value })} /></td>
-                                <td><input className="form-control" type="date" value={faseForm.fecha_inicio?.slice(0, 10)} onChange={(e) => setFaseForm({ ...faseForm, fecha_inicio: e.target.value })} /></td>
-                                <td><input className="form-control" type="date" value={faseForm.fecha_fin?.slice(0, 10)} onChange={(e) => setFaseForm({ ...faseForm, fecha_fin: e.target.value })} /></td>
+                                <td><input className="form-control" type="number" value={faseForm.duracion_dias} onChange={(e) => setFaseForm({ ...faseForm, duracion_dias: parseInt(e.target.value) || 0 })} /></td>
+                                <td><input
+                                  className="form-control"
+                                  type="date"
+                                  value={formatDateForInput(faseForm.fecha_inicio)}
+                                  onChange={(e) => setFaseForm({ ...faseForm, fecha_inicio: e.target.value })}
+                                /></td>
+                                <td><input
+                                  className="form-control"
+                                  type="date"
+                                  value={formatDateForInput(faseForm.fecha_fin)}
+                                  onChange={(e) => setFaseForm({ ...faseForm, fecha_fin: e.target.value })}
+                                /></td>
                                 <td>
                                   <button className="btn btn-success btn-sm me-1" onClick={() => saveFase(project.id, fase.id)}><FaSave /></button>
                                   <button className="btn btn-secondary btn-sm" onClick={cancelEditFase}><FaTimes /></button>
@@ -397,7 +457,83 @@ const ProjectList = () => {
                     </table>
                   </td>
                 </tr>
+                
               )}
+              {/* USUARIOS asignados al proyecto */}
+                <tr>
+                  <td colSpan="11">
+                    <h6>Usuarios asignados</h6>
+                    <table className="table table-sm table-bordered">
+                      <thead className="table-light">
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Email</th>
+                          <th>Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {project.usuarios && project.usuarios.length > 0 ? (
+                          project.usuarios.map((usuario) => (
+                            <tr key={usuario.id}>
+                              <td>{usuario.nombre}</td>
+                              <td>{usuario.email}</td>
+                              <td>
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() => eliminarUsuarioDeProyecto(project.id, usuario.id)}
+                                >
+                                  Quitar
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="3" className="text-center">No hay usuarios asignados</td>
+                          </tr>
+                        )}
+
+                        {/* Añadir nuevo usuario */}
+                        <tr>
+                          <td colSpan="3">
+                            <div className="d-flex">
+                              <select
+                                className="form-select me-2"
+                                value={nuevoUsuarioAsignado[project.id] || ""}
+                                onChange={(e) =>
+                                  setNuevoUsuarioAsignado({
+                                    ...nuevoUsuarioAsignado,
+                                    [project.id]: e.target.value,
+                                  })
+                                }
+                              >
+                                <option value="">Selecciona usuario</option>
+                                {usuariosDisponibles.map((usuario) => (
+                                  <option key={usuario.id} value={usuario.id}>
+                                    {usuario.nombre} ({usuario.email})
+                                  </option>
+                                ))}
+                              </select>
+                              <button
+                                className="btn btn-success"
+                                onClick={() =>
+                                  asignarUsuarioAProyecto(
+                                    project.id,
+                                    nuevoUsuarioAsignado[project.id]
+                                  )
+                                }
+                                disabled={!nuevoUsuarioAsignado[project.id]}
+                              >
+                                Asignar
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+
             </React.Fragment>
           ))}
         </tbody>

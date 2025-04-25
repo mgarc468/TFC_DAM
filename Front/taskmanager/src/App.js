@@ -61,6 +61,6 @@ const App = () => {
 };
 
 // Simulando un login (esto puede venir de un contexto o del localStorage)
-const loggedUserId = localStorage.getItem("userId");
+const loggedUserId = localStorage.getItem("usuario");
 
 export default App;

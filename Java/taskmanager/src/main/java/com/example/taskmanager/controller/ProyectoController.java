@@ -59,4 +59,25 @@ public class ProyectoController {
         proyectoService.eliminarProyecto(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/asignarUsuario")
+    public ResponseEntity<String> asignarUsuarioAProyecto(@RequestBody Map<String, Integer> body) {
+        int usuarioId = body.get("usuarioId");
+        int proyectoId = body.get("proyectoId");
+
+        proyectoService.asignarUsuarioAProyecto(proyectoId, usuarioId);
+
+        return ResponseEntity.ok("Usuario asignado correctamente al proyecto");
+    }
+
+    @PostMapping("/eliminarUsuario")
+    public ResponseEntity<String> eliminarUsuarioDeProyecto(@RequestBody Map<String, Integer> body) {
+        int usuarioId = body.get("usuarioId");
+        int proyectoId = body.get("proyectoId");
+
+        proyectoService.eliminarUsuarioDeProyecto(proyectoId, usuarioId);
+
+        return ResponseEntity.ok("Usuario eliminado correctamente del proyecto");
+    }
+
 }

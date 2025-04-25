@@ -1,7 +1,6 @@
 package com.example.taskmanager.repository;
 
 import com.example.taskmanager.model.Fase_Proyecto;
-import com.example.taskmanager.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

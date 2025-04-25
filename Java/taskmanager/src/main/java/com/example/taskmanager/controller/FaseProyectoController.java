@@ -110,9 +110,9 @@ public class FaseProyectoController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable int id) {
-        faseproyectoService.eliminarFaseProyecto(id);
-        return ResponseEntity.ok("Usuario eliminado");
+    public ResponseEntity<Void> eliminarFase(@PathVariable int id) {
+        faseproyectoService.eliminarFase(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
