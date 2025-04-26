@@ -24,6 +24,28 @@ const ProjectList = () => {
   const [usuariosDisponibles, setUsuariosDisponibles] = useState([]);
   const [nuevoUsuarioAsignado, setNuevoUsuarioAsignado] = useState({});
 
+  const handleNewProjectChange = (field, value) => {
+    let updatedProject = { ...newProject, [field]: value };
+  
+    const interno = parseFloat(field === "coste_interno" ? value : updatedProject.coste_interno) || 0;
+    const externo = parseFloat(field === "coste_externo" ? value : updatedProject.coste_externo) || 0;
+  
+    updatedProject.coste_total = (interno + externo).toFixed(2);
+  
+    setNewProject(updatedProject);
+  };
+  
+  const handleEditProjectChange = (field, value) => {
+    let updatedFormData = { ...formData, [field]: value };
+  
+    const interno = parseFloat(field === "coste_interno" ? value : updatedFormData.coste_interno) || 0;
+    const externo = parseFloat(field === "coste_externo" ? value : updatedFormData.coste_externo) || 0;
+  
+    updatedFormData.coste_total = (interno + externo).toFixed(2);
+  
+    setFormData(updatedFormData);
+  };
+
   function initialProjectData() {
     return {
       nombre: "",
@@ -37,7 +59,7 @@ const ProjectList = () => {
     };
   }
 
-  // Cargar usuarios disponibles (al montar el componente)
+// Cargar usuarios disponibles (al montar el componente)
 const fetchUsuarios = async () => {
   const res = await fetch("http://localhost:8080/usuario/getAll");
   const data = await res.json();
@@ -249,17 +271,18 @@ const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
       <div className="card p-3 mb-4">
         <h5>Nuevo Proyecto</h5>
         <div className="row g-2">
-          {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total"].map((field) => (
-            <div className="col-md-3" key={field}>
-              <input
-                className="form-control"
-                type="text"
-                placeholder={field.replaceAll("_", " ")}
-                value={newProject[field]}
-                onChange={(e) => setNewProject({ ...newProject, [field]: e.target.value })}
-              />
-            </div>
-          ))}
+        {["nombre", "descripcion", "presupuesto_estimado", "coste_interno", "coste_externo", "coste_total"].map((field) => (
+        <div className="col-md-3" key={field}>
+          <input
+            className="form-control"
+            type="text"
+            placeholder={field.replaceAll("_", " ")}
+            value={newProject[field]}
+            onChange={(e) => handleNewProjectChange(field, e.target.value)}
+            disabled={field === "coste_total"}  
+          />
+        </div>
+        ))}
           <div className="col-md-3">
             <select
               className="form-select"
@@ -311,7 +334,8 @@ const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
                           className="form-control"
                           type="text"
                           value={formData[field]}
-                          onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+                          onChange={(e) => handleEditProjectChange(field, e.target.value)}
+                          disabled={field === "coste_total"}
                         />
                       </td>
                     ))}
@@ -360,11 +384,11 @@ const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
                   </>
                 )}
               </tr>
-
-              {/* FASES del proyecto */}
               {expandedProjectId === project.id && (
-                <tr>
-                  <td colSpan="11">
+              <tr>
+                <td colSpan="11">
+                  {/* Bloque de Fases */}
+                  <div className="mb-4">
                     <h6>Fases del Proyecto</h6>
                     <table className="table table-sm table-bordered">
                       <thead className="table-light">
@@ -389,25 +413,34 @@ const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
                                   >
                                     <option value="">Selecciona fase</option>
                                     {fasesDisponibles.map((fase, i) => (
-                                      <option key={i} value={fase}>
-                                        {fase}
-                                      </option>
+                                      <option key={i} value={fase}>{fase}</option>
                                     ))}
                                   </select>
                                 </td>
-                                <td><input className="form-control" type="number" value={faseForm.duracion_dias} onChange={(e) => setFaseForm({ ...faseForm, duracion_dias: parseInt(e.target.value) || 0 })} /></td>
-                                <td><input
-                                  className="form-control"
-                                  type="date"
-                                  value={formatDateForInput(faseForm.fecha_inicio)}
-                                  onChange={(e) => setFaseForm({ ...faseForm, fecha_inicio: e.target.value })}
-                                /></td>
-                                <td><input
-                                  className="form-control"
-                                  type="date"
-                                  value={formatDateForInput(faseForm.fecha_fin)}
-                                  onChange={(e) => setFaseForm({ ...faseForm, fecha_fin: e.target.value })}
-                                /></td>
+                                <td>
+                                  <input
+                                    className="form-control"
+                                    type="number"
+                                    value={faseForm.duracion_dias}
+                                    onChange={(e) => setFaseForm({ ...faseForm, duracion_dias: parseInt(e.target.value) || 0 })}
+                                  />
+                                </td>
+                                <td>
+                                  <input
+                                    className="form-control"
+                                    type="date"
+                                    value={formatDateForInput(faseForm.fecha_inicio)}
+                                    onChange={(e) => setFaseForm({ ...faseForm, fecha_inicio: e.target.value })}
+                                  />
+                                </td>
+                                <td>
+                                  <input
+                                    className="form-control"
+                                    type="date"
+                                    value={formatDateForInput(faseForm.fecha_fin)}
+                                    onChange={(e) => setFaseForm({ ...faseForm, fecha_fin: e.target.value })}
+                                  />
+                                </td>
                                 <td>
                                   <button className="btn btn-success btn-sm me-1" onClick={() => saveFase(project.id, fase.id)}><FaSave /></button>
                                   <button className="btn btn-secondary btn-sm" onClick={cancelEditFase}><FaTimes /></button>
@@ -430,39 +463,53 @@ const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
 
                         {/* Añadir nueva fase */}
                         <tr>
-                        <td>
-                          <select
-                            className="form-select"
-                            value={newFase.nombre}
-                            onChange={(e) =>
-                              setNewFase({ ...newFase, nombre: e.target.value })
-                            }
-                          >
-                            <option value="">Selecciona fase</option>
-                            {fasesDisponibles.map((fase, i) => (
-                              <option key={i} value={fase}>
-                                {fase}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                          <td><input className="form-control" type="number" value={newFase.duracion_dias} onChange={(e) => setNewFase({ ...newFase, duracion_dias: e.target.value })} /></td>
-                          <td><input className="form-control" type="date" value={newFase.fecha_inicio} onChange={(e) => setNewFase({ ...newFase, fecha_inicio: e.target.value })} /></td>
-                          <td><input className="form-control" type="date" value={newFase.fecha_fin} onChange={(e) => setNewFase({ ...newFase, fecha_fin: e.target.value })} /></td>
+                          <td>
+                            <select
+                              className="form-select"
+                              value={newFase.nombre}
+                              onChange={(e) => setNewFase({ ...newFase, nombre: e.target.value })}
+                            >
+                              <option value="">Selecciona fase</option>
+                              {fasesDisponibles.map((fase, i) => (
+                                <option key={i} value={fase}>{fase}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              className="form-control"
+                              type="number"
+                              value={newFase.duracion_dias}
+                              onChange={(e) => setNewFase({ ...newFase, duracion_dias: e.target.value })}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="form-control"
+                              type="date"
+                              value={newFase.fecha_inicio}
+                              onChange={(e) => setNewFase({ ...newFase, fecha_inicio: e.target.value })}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              className="form-control"
+                              type="date"
+                              value={newFase.fecha_fin}
+                              onChange={(e) => setNewFase({ ...newFase, fecha_fin: e.target.value })}
+                            />
+                          </td>
                           <td>
                             <button className="btn btn-success btn-sm" onClick={() => addFase(project.id)}><FaPlus /></button>
                           </td>
                         </tr>
                       </tbody>
                     </table>
-                  </td>
-                </tr>
-                
-              )}
-              {/* USUARIOS asignados al proyecto */}
-                <tr>
-                  <td colSpan="11">
-                    <h6>Usuarios asignados</h6>
+                  </div>
+
+                  {/* Bloque de Usuarios (afuera del table anterior) */}
+                  <div>
+                    <h6>Usuarios Asignados</h6>
                     <table className="table table-sm table-bordered">
                       <thead className="table-light">
                         <tr>
@@ -531,8 +578,10 @@ const eliminarUsuarioDeProyecto = async (proyectoId, usuarioId) => {
                         </tr>
                       </tbody>
                     </table>
-                  </td>
-                </tr>
+                  </div>
+                </td>
+              </tr>
+            )}
 
             </React.Fragment>
           ))}

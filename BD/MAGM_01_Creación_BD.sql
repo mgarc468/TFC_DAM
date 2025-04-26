@@ -192,3 +192,24 @@ INSERT INTO fases_proyecto (proyecto_id, nombre, duracion_dias, fecha_inicio, fe
 INSERT INTO fases_proyecto (proyecto_id, nombre, duracion_dias, fecha_inicio, fecha_fin) VALUES
 (4, 'Pruebas SIT', 8, '2025-04-10', '2025-04-18'),
 (4, 'Pruebas UAT', 12, '2025-04-19', '2025-05-01');
+
+
+-- Activar el event scheduler (si no está activo)
+SET GLOBAL event_scheduler = ON;
+
+-- Crear el EVENTO programado para actualizar automáticamente las fases
+DROP EVENT IF EXISTS actualizar_fase_actual;
+
+CREATE EVENT actualizar_fase_actual
+ON SCHEDULE EVERY 5 MINUTE
+DO
+  UPDATE proyectos p
+  LEFT JOIN (
+      SELECT 
+          f.proyecto_id,
+          f.nombre
+      FROM fases_proyecto f
+      WHERE CURDATE() BETWEEN f.fecha_inicio AND f.fecha_fin
+      ORDER BY f.fecha_inicio ASC
+  ) f ON p.id = f.proyecto_id
+  SET p.fase_actual = COALESCE(f.nombre, 'Sin fase');
