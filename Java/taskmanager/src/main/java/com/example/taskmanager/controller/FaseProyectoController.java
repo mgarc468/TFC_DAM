@@ -5,9 +5,7 @@ import com.example.taskmanager.model.Proyecto;
 import com.example.taskmanager.repository.FaseProyectoRepository;
 import com.example.taskmanager.repository.ProyectoRepository;
 import com.example.taskmanager.service.FaseProyectoService;
-import com.example.taskmanager.service.ProyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
