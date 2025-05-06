@@ -2,9 +2,7 @@ package com.example.taskmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -16,8 +14,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "roles")
 public class Rol implements Serializable {
@@ -46,10 +42,22 @@ public class Rol implements Serializable {
     // -------------------- Constructores --------------------
 
     /**
-     * Constructor para inicializar el nombre del rol y su lista de usuarios.
-     *
-     * @param nombre   nombre del rol
-     * @param usuarios lista de usuarios asociados
+     * Constructor vacío.
+     */
+    public Rol() {
+    }
+
+    /**
+     * Constructor completo.
+     */
+    public Rol(int id, String nombre, List<Usuario> usuarios) {
+        this.id = id;
+        this.nombre = nombre;
+        this.usuarios = usuarios;
+    }
+
+    /**
+     * Constructor con el nombre y los usuarios.
      */
     public Rol(String nombre, List<Usuario> usuarios) {
         this.nombre = nombre;

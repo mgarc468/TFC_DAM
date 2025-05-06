@@ -74,7 +74,7 @@ public class Usuario implements Serializable {
     // -------------------- Constructores --------------------
 
     /**
-     * Constructor por defecto.
+     * Constructor vacío.
      */
     public Usuario() {
     }

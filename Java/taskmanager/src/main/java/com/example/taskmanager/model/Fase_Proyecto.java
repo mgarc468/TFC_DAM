@@ -3,9 +3,7 @@ package com.example.taskmanager.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -17,8 +15,6 @@ import java.util.Date;
  */
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "fases_proyecto")
 public class Fase_Proyecto implements Serializable {
@@ -66,6 +62,24 @@ public class Fase_Proyecto implements Serializable {
     @Column
     private Date fecha_fin;
     // -------------------- Constructores --------------------
+
+    /**
+     * Constructor sin nada.
+     */
+    public Fase_Proyecto() {
+    }
+
+    /**
+     * Constructor completo.
+     */
+    public Fase_Proyecto(int id, Proyecto proyecto, String nombre, int duracion_dias, Date fecha_inicio, Date fecha_fin) {
+        this.id = id;
+        this.proyecto = proyecto;
+        this.nombre = nombre;
+        this.duracion_dias = duracion_dias;
+        this.fecha_inicio = fecha_inicio;
+        this.fecha_fin = fecha_fin;
+    }
 
     // -------------------- Métodos getters y setters --------------------
 

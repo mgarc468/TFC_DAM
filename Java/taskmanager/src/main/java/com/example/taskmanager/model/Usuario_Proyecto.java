@@ -40,16 +40,13 @@ public class Usuario_Proyecto implements Serializable {
     // -------------------- Constructores --------------------
 
     /**
-     * Constructor por defecto.
+     * Constructor vacío.
      */
     public Usuario_Proyecto() {
     }
 
     /**
      * Constructor para crear la relación entre un usuario y un proyecto.
-     *
-     * @param usuario  el usuario asociado
-     * @param proyecto el proyecto asociado
      */
     public Usuario_Proyecto(Usuario usuario, Proyecto proyecto) {
         this.usuario = usuario;
@@ -57,11 +54,7 @@ public class Usuario_Proyecto implements Serializable {
     }
 
     /**
-     * Constructor completo con ID (por ejemplo, para usos administrativos o pruebas).
-     *
-     * @param id       ID de la relación
-     * @param usuario  usuario asociado
-     * @param proyecto proyecto asociado
+     * Constructor completo.
      */
     public Usuario_Proyecto(int id, Usuario usuario, Proyecto proyecto) {
         this.id = id;

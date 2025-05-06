@@ -47,9 +47,6 @@ public class Usuario_Rol implements Serializable {
 
     /**
      * Constructor para crear una relación entre un usuario y un rol.
-     *
-     * @param usuario el usuario asociado
-     * @param rol     el rol asignado
      */
     public Usuario_Rol(Usuario usuario, Rol rol) {
         this.usuario = usuario;
@@ -57,11 +54,7 @@ public class Usuario_Rol implements Serializable {
     }
 
     /**
-     * Constructor completo con ID de la relación.
-     *
-     * @param id      ID de la relación
-     * @param usuario el usuario asociado
-     * @param rol     el rol asignado
+     * Constructor completo.
      */
     public Usuario_Rol(int id, Usuario usuario, Rol rol) {
         this.id = id;

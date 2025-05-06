@@ -2,9 +2,7 @@ package com.example.taskmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -18,8 +16,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "proyectos")
 public class Proyecto implements Serializable {
@@ -105,6 +101,30 @@ public class Proyecto implements Serializable {
     private List<Fase_Proyecto> fases = new ArrayList<>();
 
     // -------------------- Constructores --------------------
+
+    /**
+     * Constructor vacío.
+     */
+    public Proyecto() {
+    }
+
+    /**
+     * Constructor completo.
+     */
+    public Proyecto(int id, String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor, Date fecha_creacion, List<Usuario> usuarios, List<Fase_Proyecto> fases) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.presupuesto_estimado = presupuesto_estimado;
+        this.coste_interno = coste_interno;
+        this.coste_externo = coste_externo;
+        this.coste_total = coste_total;
+        this.fase_actual = fase_actual;
+        this.creadoPor = creadoPor;
+        this.fecha_creacion = fecha_creacion;
+        this.usuarios = usuarios;
+        this.fases = fases;
+    }
 
     /**
      * Constructor completo sin ID.
