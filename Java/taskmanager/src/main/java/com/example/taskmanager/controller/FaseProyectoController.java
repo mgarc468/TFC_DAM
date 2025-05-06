@@ -13,22 +13,39 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador REST para gestionar las fases de los proyectos.
+ */
 @RestController
 @RequestMapping("/fases")
 public class FaseProyectoController {
 
     @Autowired
     private FaseProyectoRepository faseProyectoRepository;
+
     @Autowired
     private ProyectoRepository proyectoRepository;
+
     @Autowired
     private FaseProyectoService faseproyectoService;
 
+    /**
+     * Obtiene una lista de nombres distintos de fases.
+     *
+     * @return lista de nombres de fases
+     */
     @GetMapping("/nombres")
     public List<String> getNombresFases() {
         return faseProyectoRepository.findDistinctNombres();
     }
 
+    /**
+     * Actualiza una fase existente a partir de su ID y los datos proporcionados.
+     *
+     * @param id   ID de la fase a actualizar
+     * @param body mapa con los campos a actualizar
+     * @return respuesta HTTP con el estado de la operación
+     */
     @PutMapping("/update/{id}")
     public ResponseEntity<?> actualizarFase(@PathVariable int id, @RequestBody Map<String, Object> body) {
         try {
@@ -64,7 +81,13 @@ public class FaseProyectoController {
         }
     }
 
-    // Utilidad para convertir diferentes formatos de fecha
+    /**
+     * Convierte un objeto a una fecha SQL si el formato es válido.
+     *
+     * @param fechaObj objeto con la fecha (String o similar)
+     * @param campo    nombre del campo para debug
+     * @return fecha en formato java.sql.Date o null si hay error
+     */
     private java.sql.Date parseFecha(Object fechaObj, String campo) {
         if (fechaObj == null) return null;
 
@@ -83,6 +106,12 @@ public class FaseProyectoController {
         return null;
     }
 
+    /**
+     * Agrega una nueva fase a un proyecto existente.
+     *
+     * @param body mapa con los datos de la fase
+     * @return respuesta HTTP con el estado de la operación
+     */
     @PostMapping("/add")
     public ResponseEntity<?> addFase(@RequestBody Map<String, Object> body) {
         try {
@@ -107,10 +136,15 @@ public class FaseProyectoController {
         }
     }
 
+    /**
+     * Elimina una fase por su ID.
+     *
+     * @param id ID de la fase a eliminar
+     * @return respuesta HTTP sin contenido
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> eliminarFase(@PathVariable int id) {
         faseproyectoService.eliminarFase(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -2,54 +2,93 @@ package com.example.taskmanager.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Entidad que representa un proyecto.
+ * Contiene información financiera, descripción general, fases asociadas y usuarios relacionados.
+ */
 @Getter
 @Setter
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name="proyectos")
+@Table(name = "proyectos")
 public class Proyecto implements Serializable {
 
+    /**
+     * Identificador único del proyecto.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /**
+     * Nombre del proyecto.
+     */
     @Column
     private String nombre;
 
+    /**
+     * Descripción general del proyecto.
+     */
     @Column
     private String descripcion;
 
+    /**
+     * Presupuesto estimado del proyecto.
+     */
     @Column
     private float presupuesto_estimado;
 
+    /**
+     * Coste interno estimado del proyecto.
+     */
     @Column
     private float coste_interno;
 
+    /**
+     * Coste externo estimado del proyecto.
+     */
     @Column
     private float coste_externo;
 
+    /**
+     * Coste total del proyecto (interno + externo).
+     */
     @Column
     private float coste_total;
 
+    /**
+     * Nombre o código de la fase actual del proyecto.
+     */
     @Column
     private String fase_actual;
 
+    /**
+     * Usuario que creó el proyecto.
+     */
     @ManyToOne
     @JoinColumn(name = "creado_por", referencedColumnName = "id")
     private Usuario creadoPor;
 
+    /**
+     * Fecha en que se creó el proyecto.
+     */
     @Column
     private Date fecha_creacion;
 
+    /**
+     * Lista de usuarios asignados al proyecto.
+     */
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "usuarios_proyectos",
@@ -58,15 +97,21 @@ public class Proyecto implements Serializable {
     )
     private List<Usuario> usuarios = new ArrayList<>();
 
+    /**
+     * Lista de fases que componen el proyecto.
+     */
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Fase_Proyecto> fases = new ArrayList<>();
 
-    public Proyecto() {
-    }
+    // -------------------- Constructores --------------------
 
-    public Proyecto(int id, String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor, Date fecha_creacion, List<Usuario> usuarios, List<Fase_Proyecto> fases) {
-        this.id = id;
+    /**
+     * Constructor completo sin ID.
+     */
+    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno,
+                    float coste_externo, float coste_total, String fase_actual, Usuario creadoPor,
+                    Date fecha_creacion, List<Usuario> usuarios, List<Fase_Proyecto> fases) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.presupuesto_estimado = presupuesto_estimado;
@@ -80,7 +125,11 @@ public class Proyecto implements Serializable {
         this.fases = fases;
     }
 
-    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor, Date fecha_creacion, List<Usuario> usuarios, List<Fase_Proyecto> fases) {
+    /**
+     * Constructor reducido.
+     */
+    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno,
+                    float coste_externo, float coste_total, String fase_actual, Usuario creadoPor) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.presupuesto_estimado = presupuesto_estimado;
@@ -89,21 +138,9 @@ public class Proyecto implements Serializable {
         this.coste_total = coste_total;
         this.fase_actual = fase_actual;
         this.creadoPor = creadoPor;
-        this.fecha_creacion = fecha_creacion;
-        this.usuarios = usuarios;
-        this.fases = fases;
     }
 
-    public Proyecto(String nombre, String descripcion, float presupuesto_estimado, float coste_interno, float coste_externo, float coste_total, String fase_actual, Usuario creadoPor) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.presupuesto_estimado = presupuesto_estimado;
-        this.coste_interno = coste_interno;
-        this.coste_externo = coste_externo;
-        this.coste_total = coste_total;
-        this.fase_actual = fase_actual;
-        this.creadoPor = creadoPor;
-    }
+    // -------------------- Métodos getters y setters --------------------
 
     public int getId() {
         return id;

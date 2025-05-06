@@ -11,32 +11,49 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Configuración de seguridad para la aplicación Spring Boot.
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Define el filtro de seguridad principal de la aplicación.
+     * - Habilita CORS con configuración personalizada.
+     * - Permite todas las solicitudes sin autenticación.
+     *
+     * @param http objeto {@link HttpSecurity} que se configura
+     * @return la cadena de filtros de seguridad configurada
+     * @throws Exception si ocurre algún error en la configuración
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable()) // CSRF deshabilitado para APIs REST
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS habilitado
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .anyRequest().permitAll() // Permitir todas las rutas sin autenticación
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session
                 .build();
     }
 
+    /**
+     * Configuración de CORS para permitir solicitudes desde cualquier origen
+     * con métodos y cabeceras específicos.
+     *
+     * @return una fuente de configuración de CORS que aplica reglas a todos los endpoints
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("*");
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
-        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*"); // Permite cualquier origen
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
+        config.setAllowedHeaders(List.of("Content-Type", "Authorization")); // Cabeceras permitidas
+        config.setAllowCredentials(true); // Permite enviar cookies/autenticación
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/**", config); // Aplica configuración a todos los endpoints
         return source;
     }
 }
-

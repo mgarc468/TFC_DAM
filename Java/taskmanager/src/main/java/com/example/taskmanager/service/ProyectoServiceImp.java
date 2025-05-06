@@ -9,24 +9,46 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementación de la interfaz {@link ProyectoService}.
+ */
 @Service
-public class ProyectoServiceImp implements ProyectoService{
+public class ProyectoServiceImp implements ProyectoService {
 
     @Autowired
     private ProyectoRepository proyectoRepository;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    /**
+     * Guarda un nuevo proyecto.
+     *
+     * @param proyecto el proyecto a guardar
+     * @return el proyecto guardado con ID asignado
+     */
     @Override
     public Proyecto agregarProyecto(Proyecto proyecto) {
         return proyectoRepository.save(proyecto);
     }
 
+    /**
+     * Devuelve una lista de todos los proyectos junto con sus fases asociadas.
+     *
+     * @return lista de proyectos
+     */
     @Override
     public List<Proyecto> listarProyectos() {
         return proyectoRepository.findAllWithFases();
     }
 
+    /**
+     * Edita un proyecto existente con nuevos datos.
+     *
+     * @param id                ID del proyecto a editar
+     * @param datosActualizados objeto con los datos nuevos del proyecto
+     * @return el proyecto actualizado
+     */
     @Override
     public Proyecto editarProyecto(int id, Proyecto datosActualizados) {
         Proyecto existente = proyectoRepository.findById(id)
@@ -39,16 +61,26 @@ public class ProyectoServiceImp implements ProyectoService{
         existente.setCoste_externo(datosActualizados.getCoste_externo());
         existente.setCoste_total(datosActualizados.getCoste_total());
         existente.setFase_actual(datosActualizados.getFase_actual());
-        //existente.setCreadoPor(datosActualizados.getCreadoPor());
 
         return proyectoRepository.save(existente);
     }
 
+    /**
+     * Elimina un proyecto por su ID.
+     *
+     * @param id ID del proyecto a eliminar
+     */
     @Override
     public void eliminarProyecto(int id) {
         proyectoRepository.deleteById(id);
     }
 
+    /**
+     * Asigna un usuario a un proyecto.
+     *
+     * @param proyectoId ID del proyecto
+     * @param usuarioId  ID del usuario
+     */
     @Override
     public void asignarUsuarioAProyecto(int proyectoId, int usuarioId) {
         Proyecto proyecto = proyectoRepository.findById(proyectoId)
@@ -60,6 +92,12 @@ public class ProyectoServiceImp implements ProyectoService{
         proyectoRepository.save(proyecto);
     }
 
+    /**
+     * Elimina un usuario previamente asignado a un proyecto.
+     *
+     * @param proyectoId ID del proyecto
+     * @param usuarioId  ID del usuario
+     */
     @Override
     public void eliminarUsuarioDeProyecto(int proyectoId, int usuarioId) {
         Proyecto proyecto = proyectoRepository.findById(proyectoId)
@@ -70,6 +108,4 @@ public class ProyectoServiceImp implements ProyectoService{
         proyecto.getUsuarios().remove(usuario);
         proyectoRepository.save(proyecto);
     }
-
-
 }
