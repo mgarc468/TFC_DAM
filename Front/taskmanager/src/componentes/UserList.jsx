@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus } from "react-icons/fa";
 
+// Componente principal que gestiona la lista de usuarios
 const UserList = () => {
+  // Estados para almacenar datos de usuarios, roles, formularios y filtros
   const [usuarios, setUsuarios] = useState([]);
   const [roles, setRoles] = useState([]);
   const [editandoId, setEditandoId] = useState(null);
@@ -9,23 +11,27 @@ const UserList = () => {
   const [newUser, setNewUser] = useState({ nombre: "", email: "", password: "", rolId: "" });
   const [filtros, setFiltros] = useState({ nombre: "", email: "", rolId: "" });
 
+  // Obtener la lista de usuarios desde el backend
   const fetchUsuarios = async () => {
     const res = await fetch("http://localhost:8080/usuario/getAll");
     const data = await res.json();
     setUsuarios(Array.isArray(data) ? data : []);
   };
 
+  // Obtener la lista de roles desde el backend
   const fetchRoles = async () => {
     const res = await fetch("http://localhost:8080/rol/getAll");
     const data = await res.json();
     setRoles(data);
   };
 
+  // Cargar usuarios y roles al montar el componente
   useEffect(() => {
     fetchUsuarios();
     fetchRoles();
   }, []);
 
+  // Activar modo edición para un usuario específico
   const handleEdit = (usuario) => {
     setEditandoId(usuario.id);
     setFormData({
@@ -36,11 +42,13 @@ const UserList = () => {
     });
   };
 
+  // Cancelar la edición y limpiar el formulario
   const cancelarEdicion = () => {
     setEditandoId(null);
     setFormData({ nombre: "", email: "", password: "", rolId: "" });
   };
 
+  // Guardar los cambios realizados a un usuario
   const guardarCambios = async (id) => {
     const res = await fetch(`http://localhost:8080/usuario/update/${id}`, {
       method: "PUT",
@@ -50,11 +58,12 @@ const UserList = () => {
         email: formData.email,
         password: formData.password,
         roles: [
-          { id: parseInt(formData.rolId) } // 👈 muy importante que el id sea número
+          { id: parseInt(formData.rolId) } // importante que el ID sea numérico
         ]
       }),
     });
-  
+
+    // Si la respuesta es exitosa, se actualiza la lista y se sale del modo edición
     if (res.ok) {
       await fetchUsuarios();
       cancelarEdicion();
@@ -63,6 +72,7 @@ const UserList = () => {
     }
   };
 
+  // Eliminar un usuario tras confirmación del usuario
   const eliminarUsuario = async (id) => {
     if (window.confirm("¿Eliminar este usuario?")) {
       const res = await fetch(`http://localhost:8080/usuario/delete/${id}`, {
@@ -73,7 +83,9 @@ const UserList = () => {
     }
   };
 
+  // Crear un nuevo usuario con los datos del formulario
   const crearUsuario = async () => {
+    // Validar que todos los campos estén llenos
     if (!newUser.nombre || !newUser.email || !newUser.password || !newUser.rolId) {
       alert("Completa todos los campos");
       return;
@@ -85,6 +97,7 @@ const UserList = () => {
       body: JSON.stringify(newUser),
     });
 
+    // Si es exitoso, se recarga la lista y se limpia el formulario
     if (res.ok) {
       await fetchUsuarios();
       setNewUser({ nombre: "", email: "", password: "", rolId: "" });
@@ -93,6 +106,7 @@ const UserList = () => {
     }
   };
 
+  // Filtrado de usuarios basado en el nombre, email y rol
   const usuariosFiltrados = usuarios.filter((u) => {
     const rol = u.roles?.[0]?.nombre || "";
     return (
@@ -106,10 +120,11 @@ const UserList = () => {
     <div className="container mt-5">
       <h2 className="mb-4">Usuarios Registrados</h2>
 
-      {/* Crear Usuario */}
+      {/* Sección para añadir nuevo usuario */}
       <div className="card p-3 mb-4">
         <h5>Añadir Nuevo Usuario</h5>
         <div className="row g-2">
+          {/* Campo: Nombre */}
           <div className="col-md-2">
             <input
               type="text"
@@ -119,6 +134,7 @@ const UserList = () => {
               onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
             />
           </div>
+          {/* Campo: Email */}
           <div className="col-md-3">
             <input
               type="email"
@@ -128,6 +144,7 @@ const UserList = () => {
               onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
             />
           </div>
+          {/* Campo: Contraseña */}
           <div className="col-md-2">
             <input
               type="password"
@@ -137,6 +154,7 @@ const UserList = () => {
               onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
             />
           </div>
+          {/* Campo: Rol */}
           <div className="col-md-2">
             <select
               className="form-select"
@@ -151,6 +169,7 @@ const UserList = () => {
               ))}
             </select>
           </div>
+          {/* Botón: Añadir */}
           <div className="col-md-3">
             <button className="btn btn-success w-100" onClick={crearUsuario}>
               <FaPlus /> Añadir Usuario
@@ -159,10 +178,11 @@ const UserList = () => {
         </div>
       </div>
 
-      {/* Tabla */}
+      {/* Tabla de usuarios */}
       <table className="table table-striped table-bordered align-middle">
         <thead className="table-light">
           <tr>
+            {/* Filtros en cabecera */}
             <th>
               Nombre
               <input
@@ -200,6 +220,7 @@ const UserList = () => {
           {usuariosFiltrados.map((usuario) => (
             <tr key={usuario.id}>
               {editandoId === usuario.id ? (
+                // Modo edición de fila
                 <>
                   <td>
                     <input
@@ -243,6 +264,7 @@ const UserList = () => {
                   </td>
                 </>
               ) : (
+                // Modo vista de fila
                 <>
                   <td>{usuario.nombre}</td>
                   <td>{usuario.email}</td>
