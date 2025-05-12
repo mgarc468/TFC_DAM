@@ -51,7 +51,21 @@ const Dashboard = () => {
       {error && <div className="alert alert-danger">{error}</div>}
 
       {/* Iterar sobre todos los proyectos */}
-      {projects.map((project) => {
+      {projects
+        .filter((project) => {
+          const today = moment().startOf("day");
+
+          // Excluir proyectos entregados
+          if (project.estado === "Entregado") return false;
+
+          // Excluir proyectos donde todas las fases ya terminaron antes de hoy
+          const tieneFaseNoVencida = project.fases?.some((fase) =>
+            moment(fase.fecha_fin).startOf("day").isSameOrAfter(today)
+          );
+
+          return tieneFaseNoVencida;
+        })
+        .map((project) => {
         // Si el proyecto no tiene fases, no se renderiza
         if (!project.fases || project.fases.length === 0) return null;
 
