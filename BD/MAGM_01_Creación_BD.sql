@@ -155,22 +155,40 @@ INSERT INTO fases_proyecto (proyecto_id, nombre, duracion_dias, fecha_inicio, fe
 (1, 'Pruebas UAT', 7, '2025-04-28', '2025-05-04'),
 (1, 'PPP', 1, '2025-05-05', '2025-05-05'),
 (1, 'Subida a Producción', 1, '2025-05-06', '2025-05-06'),
-(1, 'Entregado', 999, '2025-05-07', '2100-01-01');
+(1, 'Entregado', 1, '2025-05-07', '2025-05-07');
 
 -- Fases para el proyecto "Aplicación Móvil"
 INSERT INTO fases_proyecto (proyecto_id, nombre, duracion_dias, fecha_inicio, fecha_fin) VALUES
-(2, 'Desarrollo', 15, '2025-04-01', '2025-04-15'),
-(2, 'Pruebas SIT', 10, '2025-04-16', '2025-04-25');
+(2, 'Requisitos', 7, '2025-05-19', '2025-05-25'),
+(2, 'Viabilidad', 7, '2025-05-26', '2025-06-01'),
+(2, 'DSC Comité', 7, '2025-06-02', '2025-06-08'),
+(2, 'Desarrollo + Pruebas SIT', 14, '2025-06-09', '2025-06-22'),
+(2, 'Pruebas UAT', 7, '2025-06-23', '2025-06-29'),
+(2, 'PPP', 1, '2025-06-30', '2025-06-30'),
+(2, 'Subida a Producción', 1, '2025-07-01', '2025-07-01'),
+(2, 'Entregado', 1, '2025-07-02', '2025-07-02');
 
 -- Fases para el proyecto "Sistema de Gestión"
 INSERT INTO fases_proyecto (proyecto_id, nombre, duracion_dias, fecha_inicio, fecha_fin) VALUES
-(3, 'Requisitos', 12, '2025-04-05', '2025-04-16'),
-(3, 'Desarrollo', 25, '2025-04-17', '2025-05-11');
+(3, 'Requisitos', 7, '2025-07-21', '2025-07-27'),
+(3, 'Viabilidad', 7, '2025-07-28', '2025-08-03'),
+(3, 'DSC Comité', 7, '2025-08-04', '2025-08-10'),
+(3, 'Desarrollo + Pruebas SIT', 14, '2025-08-11', '2025-08-24'),
+(3, 'Pruebas UAT', 7, '2025-08-25', '2025-08-31'),
+(3, 'PPP', 1, '2025-09-01', '2025-09-01'),
+(3, 'Subida a Producción', 1, '2025-09-02', '2025-09-02'),
+(3, 'Entregado', 1, '2025-09-03', '2025-09-03');
 
 -- Fases para el proyecto "Plataforma de E-learning"
 INSERT INTO fases_proyecto (proyecto_id, nombre, duracion_dias, fecha_inicio, fecha_fin) VALUES
-(4, 'Pruebas SIT', 8, '2025-04-10', '2025-04-18'),
-(4, 'Pruebas UAT', 12, '2025-04-19', '2025-05-01');
+(4, 'Requisitos', 7, '2025-09-15', '2025-09-21'),
+(4, 'Viabilidad', 7, '2025-09-22', '2025-09-28'),
+(4, 'DSC Comité', 7, '2025-09-29', '2025-10-05'),
+(4, 'Desarrollo + Pruebas SIT', 14, '2025-10-06', '2025-10-19'),
+(4, 'Pruebas UAT', 7, '2025-10-20', '2025-10-26'),
+(4, 'PPP', 1, '2025-10-27', '2025-10-27'),
+(4, 'Subida a Producción', 1, '2025-10-28', '2025-10-28'),
+(4, 'Entregado', 1, '2025-10-29', '2025-10-29');
 
 
 -- Activar el event scheduler (si no está activo)
